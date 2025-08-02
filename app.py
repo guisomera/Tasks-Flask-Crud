@@ -16,7 +16,7 @@ def create_task():
     new_task = TaskManager(id= task_id_control, title=data.get("title"), description=data.get("description"))  #Data.get() pra pegar a info de dentro da chave tal, atribuindo aos elementos da minha classe
     task_id_control += 1
     tasks.append(new_task)
-    print(tasks)
+    print(tasks) 
     return jsonify({"message": "Nova tarefa criada com sucesso!!!"})
 
 @app.route("/tasks", methods=['GET'])
@@ -30,7 +30,7 @@ def get_tasks   ():
     print(task_list)
     return jsonify(output)                          #Retornou a variável de saida em json
 
-@app.route("/tasks/<int:id>", methods=['GET'])
+@app.route("/tasks/<int:id>", methods=['GET'])      #Definimos parametro de rota(permite que voce recebe alguma variavel do usuario)
 def get_task(id):
     for t in tasks:                                 #Percorrendo a lista de atividade
         if t.id == id:                              #Pra ver se encontra o id q foi solicitado
@@ -38,5 +38,22 @@ def get_task(id):
         
     return jsonify({"Message": "Não foi possível encontrar a atividade"}), 404
 
+@app.route("/tasks/<int:id>", methods=['PUT'])
+def update_task(id):
+    task = None
+    for t in tasks:                                 #Procurei todos os itens em tasks e os chamei de t
+        if t.id ==id:                               #Se o id da task for igual o id que o usuario mandou 
+            task = t                                #task é igual t 
+    
+    if task ==  None:                               #Se nao achar retorna essa mensagem 
+        return jsonify({"message": "Não foi possível encontrar tarefa"}), 404
+    
+    data = request.get_json()                       #Mesma função q usei a cima pra pegar info que o usuario mandou no site 
+    task.title = data['title']                      #Pegando e atribuindo novo titulo
+    task.description = data['description']          #Pegando e atribuindo nova descrição
+    task.completed = data['completed']              #Pegando e atribuindo se esta completa ou nao
+   
+    return jsonify({"message": "Tarefa atualizada com sucesso!!"}), 200
+
 if __name__ == "__main__":      #Basicamente diz: "Se este arq  uivo esta sendo executado diretamente (e nao importado), rode o Flask"
-    app.run(debug=True)         #Rodar o Flask e debug é utilizado para desenvolvedores
+    app.run(debug=True)         #Rodar o Flask e debug é utilizado para desenvolvedores 
