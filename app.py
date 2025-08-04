@@ -1,6 +1,6 @@
-from flask import Flask, request, jsonify         #Importação do Flask, metodo request e para tambem retornar arquivos json
+from flask import Flask, request, jsonify   #Importação do Flask, metodo request e para tambem retornar arquivos json
 from models.task import TaskManager         #Da pasta models(pasta).task(nota), importa classe task
-app = Flask(__name__)           #Atribuindo a classe flask em app, POO basico. __name__ é uma variavel especial que guarda o nome do arquivo atual
+app = Flask(__name__)                       #Atribuindo a classe flask em app, POO basico. __name__ é uma variavel especial que guarda o nome do arquivo atual
 
     # CRUD
     # Create, Read, Update and Delete
@@ -20,7 +20,7 @@ def create_task():
     return jsonify({"message": "Nova tarefa criada com sucesso!!!"})
 
 @app.route("/tasks", methods=['GET'])
-def get_tasks   ():
+def get_tasks():
     task_list = [task.to_dict() for task in tasks]              #Criamos outra lista pra dar saida, cada item em tasks vai ser adicionado em task_list pelo metodo to_dict()
 
     output = {                                      #Criou uma variavel de saida 
@@ -42,7 +42,7 @@ def get_task(id):
 def update_task(id):
     task = None
     for t in tasks:                                 #Procurei todos os itens em tasks e os chamei de t
-        if t.id ==id:                               #Se o id da task for igual o id que o usuario mandou 
+        if t.id == id:                              #Se o id da task for igual o id que o usuario mandou 
             task = t                                #task é igual t 
     
     if task ==  None:                               #Se nao achar retorna essa mensagem 
@@ -54,6 +54,20 @@ def update_task(id):
     task.completed = data['completed']              #Pegando e atribuindo se esta completa ou nao
    
     return jsonify({"message": "Tarefa atualizada com sucesso!!"}), 200
+
+@app.route("/tasks/<int:id>", methods=['DELETE'])
+def delete_tasks(id):
+    global task_id_control 
+    task = None
+    for t in tasks:
+        if t.id == id:
+            task = t 
+            task_id_control -= 1
+            tasks.pop(id - 1)
+            return jsonify({"message": "Tarefa deletada com sucesso!!"})
+        
+    if task == None:
+        return jsonify({"message": "Não foi possível encontrar tarefa"})
 
 if __name__ == "__main__":      #Basicamente diz: "Se este arq  uivo esta sendo executado diretamente (e nao importado), rode o Flask"
     app.run(debug=True)         #Rodar o Flask e debug é utilizado para desenvolvedores 
