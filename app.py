@@ -17,7 +17,7 @@ def create_task():
     task_id_control += 1
     tasks.append(new_task)
     print(tasks) 
-    return jsonify({"message": "Nova tarefa criada com sucesso!!!"})
+    return jsonify({"message": "Nova tarefa criada com sucesso!!!", "id": new_task.id })
 
 @app.route("/tasks", methods=['GET'])
 def get_tasks():
@@ -63,11 +63,13 @@ def delete_tasks(id):
         if t.id == id:
             task = t 
             task_id_control -= 1
-            tasks.pop(id - 1)
-            return jsonify({"message": "Tarefa deletada com sucesso!!"})
+            break
         
     if task == None:
-        return jsonify({"message": "Não foi possível encontrar tarefa"})
+        return jsonify({"message": "Não foi possível encontrar tarefa"}), 404
 
+    tasks.remove(task)
+    return jsonify({"message": "Tarefa deletada com sucesso!!"})
+ 
 if __name__ == "__main__":      #Basicamente diz: "Se este arq  uivo esta sendo executado diretamente (e nao importado), rode o Flask"
     app.run(debug=True)         #Rodar o Flask e debug é utilizado para desenvolvedores 
