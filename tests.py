@@ -56,6 +56,22 @@ def test_update_task():
     assert response_json['description'] == update['description']            #Testando descrição
     assert response_json['completed'] == update['completed']                #Testando se esta completa
 
+def test_delete_task():
+    task_id = 1                                                             #Atribuindo a task que queremos em valor 1 
+    if task_id in tasks:                                                    #Conferindo se tem algo em tasks
+        response =  requests.delete(f"{BASE_URL}/tasks/{task_id}")          #Abrindo requisição com metodo delete
+        assert response.status_code == 200                                  #Vendo se deu certo (200)
+        response_json = response.json()                                     #Pegando o que vai me  devolver
+        assert response_json['message'] == 'Tarefa deletada com sucesso!!'  #Testando se a mensagem ta certo
+
+        tasks.remove(task_id)                                               #Tirando a task da lista, -1 por causa na enumeração de posição
+
+    response = requests.get(f"{BASE_URL}/tasks/{task_id}")                  #Abrindo uma requisição get pra conferir
+    assert response.status_code == 404                                      #Se ele for buscar a tarefa e encontrar 404(nao encontrar ela) deu certo 
+
+
+
+
 
        
         
